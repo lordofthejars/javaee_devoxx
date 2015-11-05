@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Develop and Deploy your Microservices with Apache TomEE</title>
+  <link rel="stylesheet" type="text/css" href="build/build.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <body>
+    <article>
+      <section data-bespoke-backdrop="backdrop backdrop--got" class="got undefined">
+        <h1>Develop and Deploy your <span class='important'>JavaEE</span> Microservices with <span class='important'>Apache TomEE</span></h1>
+      </section>
+      <section><img src="images/profile.jpg" class="avatar">
+        <h4>@alexsotob - lordofthejars.com</h4><img src="images/cloudbees.png" class="cloudbees"><img src="images/logos.png" class="logos">
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section>
+        <h2>Dependencies</h2>
+        <pre class="small language-xml"><code>&lt;dependency&gt;
+  &lt;groupId&gt;javax&lt;/groupId&gt;
+  &lt;artifactId&gt;javaee-api&lt;/artifactId&gt;
+  &lt;version>7.0&lt;/version&gt;
+  &lt;scope>provided&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section> 
+        <h2>JAX-RS</h2>
+        <pre class="small language-javascript"><code>@Path("/quote")
+public class QuoteService {
+
+  @GET
+  @Produces({TEXT_PLAIN})
+  public String quote() {
+    return "The Winter is Coming.";            
+  }
+}</code></pre>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--runner" class="runner undefined">
+        <h1 class="title-single-words">Application <span class='important'>Server</span></h1>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+        <aside role="note">Open source for transparency</aside>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--tomee" class="tomee undefined">
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--shin" class="shin undefined">
+        <h2>It is <span class='important'>Fast</span></h2>
+        <pre class="small language-terminal"><code>INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 106 ms.
+INFO - Deployed Application(path=/Users/alex/javaone/apache-tomee-7.0.0/webapps/ROOT)
+
+INFO - Deployment of web application directory webapps/ROOT has finished in 180 ms
+INFO - Starting ProtocolHandler ["http-nio-8080"]
+INFO - Starting ProtocolHandler ["ajp-nio-8009"]
+INFO - Server startup in 983 ms</code></pre>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section>   
+        <h2>JUnit      </h2>
+        <pre class="small language-javascript"><code>@Test
+public void shouldGetQuote() {
+  QuoteService quoteService = new QuoteService();
+  
+  assertThat(quoteService.quote(), is("The Winter is Coming."));
+}</code></pre>
+        <div class="footer">Alex Soto (@alexsotob)</div>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--arquillian" class="arquillian undefined">
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section>   
+        <h2>Arquillian Test</h2>
+        <pre class="small language-javascript"><code>@RunWith(Arquillian.class)
+public class ColorServiceIntegrationTest {
+
+  @Deployment public static WebArchive create() {
+      return ShrinkWrap.create(WebArchive.class)
+                          .addClasses(ColorService.class, 
+                                      Color.class);
+  }
+  
+  @ArquillianResource private URL webappUrl;
+  
+  @Test @RunAsClient public void postAndGet() {
+    final WebClient webClient = WebClient.create(webappUrl);
+    final Response response = webClient.path("quote").get();
+    assertThat(response.getStatus(), is(200));
+    //...
+  }</code></pre>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--datacenter" class="datacenter undefined">
+        <h1>Deploying to <span class='important'>Production</span></h1>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section>
+        <h2>Using <span class='important'>WAR</span> file</h2>
+        <pre class="small language-terminal"><code>mvn clean install
+cp quote.war &lt;TOMEE_HOME&gt;/webapps
+</code></pre>
+      </section>
+      <section>
+        <h2>TomEE Maven Plugin</h2>
+        <pre class="small language-xml"><code>&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.openejb.maven&lt;/groupId&gt;
+  &lt;artifactId&gt;tomee-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;${tomee.version}&lt;/version&gt;
+  &lt;configuration&gt;
+    &lt;tomeeVersion>${tomee.version}&lt;/tomeeVersion&gt;
+    &lt;tomeeClassifier&gt;jaxrs&lt;/tomeeClassifier&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section>
+        <h2>Make <span class='important'>JAR</span>, not <span class='important'>WAR</span></h2>
+        <pre class="small language-terminal"><code>clean install tomee:exec
+java -jar quote-1.0.0-exec.jar</code></pre><br>
+        <pre class="small language-terminal"><code>Extracting tomee to /Users/alexsoto/git/tomee-jaxrs-starter-project/target/.distribution
+Using CATALINA_BASE:   /Users/alexsoto/git/tomee-jaxrs-starter-project/target/.distribution
+Using CATALINA_HOME:   /Users/alexsoto/git/tomee-jaxrs-starter-project/target/.distribution
+Using CATALINA_TMPDIR: /Users/alexsoto/git/tomee-jaxrs-starter-project/target/.distribution/temp
+Using JRE_HOME:        /Library/Java/JavaVirtualMachines/jdk1.8.0_51.jdk/Contents/Home
+Using CLASSPATH:       /Users/alexsoto/git/tomee-jaxrs-starter-...
+</code></pre>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--whale" class="whale undefined">
+        <h2>Deploy in <span class='important'>Docker</span></h2>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section>
+        <h2>Dockerfile</h2>
+        <pre class="small language-javascript"><code>FROM java:8
+WORKDIR /
+ADD target/quote-1.0.0-exec.jar /app/quote-1.0.0-exec.jar
+EXPOSE 8080
+CMD ["java", "-jar", "/app/quote-1.0.0-exec.jar"]</code></pre>
+        <h2>Build And Run</h2>
+        <pre class="small language-terminal"><code>docker build -t quote .
+docker run -ti -p 8080:8080 quote
+</code></pre>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--mesosmarathon" class="mesosmarathon undefined">
+        <h2>Mesos + Marathon in Native</h2>
+      </section>
+      <section>
+        <h2>Run Apache TomEE </h2>
+        <pre class="small language-json"><code>{
+  "uris": [
+    "http://myartifactsrepo/quote-1.0.0-exec.jar"
+  ]
+  "id": "quote",
+  "cmd": "java -jar -DadditionalSystemProperties=-Dtomcat.http.port=$PORT quote-1.0.0-exec.jar",
+  "mem": 256,
+  "cpus": 0.5,
+  "instances": 1,
+  "ports":[10000],
+  "constraints": [
+    ["hostname", "UNIQUE"]
+  ]
+}
+</code></pre>
+        <div class="footer"><i class="fa fa-twitter">&nbsp;alexsotob&nbsp;</i><i class="fa fa-github">&nbsp;lordofthejars</i></div>
+      </section>
+      <section data-bespoke-backdrop="backdrop backdrop--javaeeftw" class="javaeeftw undefined">
+      </section>
+      <section><img src="images/profile.jpg" class="avatar"><br><a href="http://lordofthejars.github.io/javaee_devoxx" style="border:none"><i class="fa fa-github"></i>
+          <h3>http://lordofthejars.github.io/javaee_devoxx</h3><i class="fa fa-envelope"></i>
+          <h3>asotobu@gmail.com</h3></a>
+      </section>
+    </article>
+    <script src="build/build.js"></script>
+  </body>
+</html>
