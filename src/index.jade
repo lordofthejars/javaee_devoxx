@@ -11,7 +11,7 @@ html
   head
   meta(charset='utf-8')
   meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
-  title Innovating Democracy with Java EE and Open Source 
+  title Develop and Deploy your Microservices with Apache TomEE
 
   link(rel='stylesheet', type='text/css', href='build/build.css')
   link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css')
@@ -21,7 +21,7 @@ html
     article
 
       +slide('got')
-        h1 Develop and Deploy your <span class='important'>JavaEE</span> Microservies with <span class='important'>Apache TomEE</span>
+        h1 Develop and Deploy your <span class='important'>JavaEE</span> Microservices with <span class='important'>Apache TomEE</span>
 
       +slide
         img.avatar(src='images/profile.jpg')
@@ -50,13 +50,8 @@ html
         h2 JAX-RS
         pre.small.language-javascript
           code.
-            @Singleton
-            @Lock(LockType.READ)
             @Path("/quote")
             public class QuoteService {
-              
-              @PersistenceContext
-              EntityManager em;
 
               @GET
               @Produces({TEXT_PLAIN})
@@ -84,7 +79,14 @@ html
         h2 It is <span class='important'>Fast</span>
         pre.small.language-terminal
           code.
-            aaaa
+            INFO - All injection points were validated successfully.
+            INFO - OpenWebBeans Container has started, it took 106 ms.
+            INFO - Deployed Application(path=/Users/alex/javaone/apache-tomee-7.0.0/webapps/ROOT)
+            
+            INFO - Deployment of web application directory webapps/ROOT has finished in 180 ms
+            INFO - Starting ProtocolHandler ["http-nio-8080"]
+            INFO - Starting ProtocolHandler ["ajp-nio-8009"]
+            INFO - Server startup in 983 ms
         div.footer
           i.fa.fa-twitter &nbsp;alexsotob&nbsp;
           i.fa.fa-github &nbsp;lordofthejars
@@ -96,7 +98,6 @@ html
             @Test
             public void shouldGetQuote() {
               QuoteService quoteService = new QuoteService();
-              quoteService.entityManager = mock(EntityManager.class);
                 
               assertThat(quoteService.quote(), is("The Winter is Coming."));
             }
@@ -165,7 +166,7 @@ html
           i.fa.fa-github &nbsp;lordofthejars
       
       +slide
-        h2 Making <span class='important'>JAR</span> and not <span class='important'>WAR</span>
+        h2 Make <span class='important'>JAR</span>, not <span class='important'>WAR</span>
         pre.small.language-terminal
           code.
             clean install tomee:exec
@@ -205,7 +206,7 @@ html
         h2. Mesos + Marathon in Native
           
       +slide
-        h3 Run Apache TomEE 
+        h2 Run Apache TomEE 
         pre.small.language-json
           code.
             {
@@ -227,15 +228,14 @@ html
           i.fa.fa-twitter &nbsp;alexsotob&nbsp;
           i.fa.fa-github &nbsp;lordofthejars
       
-      +slide
-        h2 FTW
+      +slide('javaeeftw')
      
       +slide
         img.avatar(src='images/profile.jpg')
         br
-        a(href='http://github.com/lordofthejars/javaee_javaone', style='border:none')
+        a(href='http://lordofthejars.github.io/javaee_devoxx', style='border:none')
           i.fa.fa-github
-          h3 http://github.com/lordofthejars/javaee_javaone
+          h3 http://lordofthejars.github.io/javaee_devoxx
           i.fa.fa-envelope
           h3 asotobu@gmail.com
       
