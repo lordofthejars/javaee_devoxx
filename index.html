@@ -78,8 +78,7 @@ public class ColorServiceIntegrationTest {
 
   @Deployment public static WebArchive create() {
       return ShrinkWrap.create(WebArchive.class)
-                          .addClasses(ColorService.class, 
-                                      Color.class);
+                          .addClasses(QuoteService.class);
   }
   
   @ArquillianResource private URL webappUrl;
